@@ -23,7 +23,11 @@ let bodyParser = require('body-parser');
 var name = false;
 
 let app = express();
+
 app.set('port', (process.env.PORT || 8080));
+
+var textModule = require('./module/text_action.js');
+
 app.use(bodyParser.json({type: 'application/json'}));
 
 app.post('/', function (request, response) {
@@ -54,10 +58,9 @@ function rawInput (assistant) {
                 'SO tell me about your problems.</speak>');
             assistant.ask(inputPrompt);
         }
-      let inputPrompt = assistant.buildInputPrompt(true, '<speak>You said, <say-as interpret-as="ordinal">' +
-        assistant.getRawInput() + '</say-as></speak>',
-        ['I didn\'t hear a number', 'If you\'re still there, what\'s the number?', 'What is the number?']);
-      assistant.ask(inputPrompt);
+      else {
+        textModule.actOnText(assistant);
+      }
   }
 }
 
