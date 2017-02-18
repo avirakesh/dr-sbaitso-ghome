@@ -26,7 +26,7 @@ let app = express();
 
 app.set('port', (process.env.PORT || 8080));
 
-var textModule = require('./module/text_action.js');
+var textModule = require('./modules/text_action.js');
 
 app.use(bodyParser.json({type: 'application/json'}));
 
