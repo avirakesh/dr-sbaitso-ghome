@@ -51,11 +51,11 @@ function rawInput (assistant) {
         if (name == true) {
             name = false;
             let inputPrompt = assistant.buildInputPrompt(true, 
-                '<speak>Hello ' + assistant.getRawInput() + ', My name is Doctor Sbaitso.' +
-                'I am here to help you.' + 'Say whatever is in your mind freely.' + 
-                'Our conversation will be kept in strict confidence.' + 
-                'Memory contents will be wiped after you leave.' + 
-                'SO tell me about your problems.</speak>');
+                '<speak>Hello ' + assistant.getRawInput() + ', my name is Doctor Sbaitso.' +
+                'I am here to help you. ' + 'Say whatever is in your mind freely. ' + 
+                'Our conversation will be kept in strict confidence. ' + 
+                'Memory contents will be wiped after you leave. ' + 
+                'So, tell me about your problems.</speak>');
             assistant.ask(inputPrompt);
         }
       else {
