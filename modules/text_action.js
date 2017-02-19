@@ -1,7 +1,7 @@
-var speakeasy = require ('speakeasy-nlp');
 var salient  = require ('salient');
 var nlp = require('nlp_compromise');
 nlp.plugin(require('nlp-links'));
+
 module.exports = {};
 
 module.exports.actOnText = function(assistant)  {
