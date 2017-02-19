@@ -11,30 +11,36 @@ module.exports.actOnText = function(assistant)  {
     // console.log('Sentiment: ');
     var glossary = new salient.glossary.Glossary();
     glossary.parse(assistant.getRawInput());
-    console.log('Salient: ');
-    console.log(glossary.toJSON());
-    console.log(glossary.concepts());
-    console.log("Simple Text: " + nlp.text(assistant.getRawInput()).root());
-    console.log(nlp.text(assistant.getRawInput()).tags());
+    // console.log('Salient: ');
+    // console.log(glossary.toJSON());
+    // console.log(glossary.concepts());
+    // console.log("Simple Text: " + nlp.text(assistant.getRawInput()).root());
+    // console.log(nlp.text(assistant.getRawInput()).tags());
     // console.log(nlp.sentence(assistant.getRawInput()).withLinks());
 
     
 
     if (isQuestion(glossary.toJSON())) {
         // console.log("Question!!!!!");
-        let inputPrompt = assistant.buildInputPrompt(true, 'Question: ' + assistant.getRawInput());
-        assistant.ask(question(assistant.getRawInput));
+        var inputPrompt = assistant.buildInputPrompt(true, 'Question: ' + assistant.getRawInput());
+        assistant.ask(false, question(assistant.getRawInput()));
     } else {
         var arr = getStatementType(nlp.text(assistant.getRawInput()).sentences[0].terms);
         console.log(arr);
-        let inputPrompt = assistant.buildInputPrompt(true, assistant.getRawInput());
+        // let inputPrompt = assistant.buildInputPrompt(true, assistant.getRawInput());
         if (arr[0] == 0)
         {
-            assistant.ask(assistant.buildInputPrompt(standardNoun(arr[2], arr[1], arr[3])));
+            // assistant.ask(assistant.buildInputPrompt(standardNoun(arr[2], arr[1], arr[3])));
+            var response = standardNoun(arr[2], arr[1], arr[3]);
+            console.log(response + " : " + assistant.getRawInput());
+            var inputPrompt = assistant.buildInputPrompt(true, response);
+            console.log(inputPrompt);
+            assistant.ask(inputPrompt);
+            console.log("2");
         }
-        else
+        else if (arr[0] == 1)
         {
-            assistant.ask(assistant.buildInputPrompt(standardNoun(arr[2], arr[1], arr[3])));
+            assistant.ask(assistant.buildInputPrompt(true, standardAdj(arr[2], arr[1], arr[3])));
         }
         
     }
@@ -60,9 +66,11 @@ function standardNoun(sub, act, obj)
     switch ( Math.floor(Math.random()*2) )
     {
         case 0: 
-            var gerund = nlp.verb(act).gerund();
+            var gerund = nlp.verb(act).conjugate().gerund;
             var objects = nlp.noun(obj).pluralize();
-            return "Do you think about " + gerund + " " + objects + " often?";
+            var response = "Do you think about " + gerund + " " + objects + " often?";
+            console.log(response);
+            return response;
         case 1:
             response = "Why did ";
             if (sub=="I") 
@@ -73,7 +81,7 @@ function standardNoun(sub, act, obj)
             {
                 response += nlp.person(sub).pronoun() + " ";
             }
-            response += nlp.verb(act).infinitive() + " ";
+            response += nlp.verb(act).conjugate().infinitive + " ";
             if (sub=="me") 
             {
                 response += "you?";
@@ -82,6 +90,7 @@ function standardNoun(sub, act, obj)
             {
                 response += nlp.person(sub).pronoun() + "?";
             }
+            console.log(response);
             return response; 
 
     }
@@ -94,7 +103,7 @@ function standardAdj(sub, act, adj)
     switch ( Math.floor(Math.random()*2) )
     {
         case 0: 
-            var gerund = nlp.verb(act).gerund();
+            var gerund = nlp.verb(act).conjugate().gerund;
             var objects = nlp.noun(adj).pluralize();
             return "Do you think about " + gerund + " " + objects + " often?";
         case 1: 
@@ -109,6 +118,7 @@ function standardAdj(sub, act, adj)
             response += " " + adj;
             return response;
     }
+}
 
 function getStatementType(terms) {
     var flag = true;
@@ -150,7 +160,4 @@ function getStatementType(terms) {
     }
 
     return arr;
-}
-
-        
 }

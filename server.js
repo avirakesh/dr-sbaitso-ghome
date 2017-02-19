@@ -60,6 +60,7 @@ function rawInput (assistant) {
         }
       else {*/
         textModule.actOnText(assistant);
+        console.log("1");
       // }
   }
 }
