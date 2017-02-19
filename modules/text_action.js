@@ -22,8 +22,8 @@ module.exports.actOnText = function(assistant)  {
 
     if (isQuestion(glossary.toJSON())) {
         // console.log("Question!!!!!");
-        var inputPrompt = assistant.buildInputPrompt(true, 'Question: ' + assistant.getRawInput());
-        assistant.ask(false, question(assistant.getRawInput()));
+        var inputPrompt = assistant.buildInputPrompt(true, question(assistant.getRawInput()));
+        assistant.ask(inputPrompt);
     } else {
         var arr = getStatementType(nlp.text(assistant.getRawInput()).sentences[0].terms);
         console.log(arr);
@@ -48,7 +48,21 @@ module.exports.actOnText = function(assistant)  {
 
 function question( sentence)
 {
-
+    var c = Math.floor(Math.random() * 6);
+    switch (c) {
+        case 0:
+            return "Why do you want to know that?"
+        case 1:
+            return "You do not want to know that."
+        case 2:
+            return "Do you have an interest in the topic?"
+        case 3:
+            return "I am not sure I can answer that."
+        case 4:
+            return "Are you sure you want to know that?"
+        case 5:
+            return "That's not my problem."
+    }
 }
 
 function isQuestion(glossary) 
@@ -63,7 +77,7 @@ function isQuestion(glossary)
 
 function standardNoun(sub, act, obj)
 {
-    switch ( Math.floor(Math.random()*2) )
+    switch ( Math.floor(Math.random()*6) )
     {
         case 0: 
             var gerund = nlp.verb(act).conjugate().gerund;
@@ -91,7 +105,16 @@ function standardNoun(sub, act, obj)
                 response += obj + "?";
             }
             console.log(response);
-            return response; 
+            return response;
+        case 2:
+            return "How does that make you feel?"
+        case 3:
+            return "Interesting, tell me more."
+        case 4:
+            return "You think you are crazy, but it's only an illusion."
+        case 5:
+            return "Let's talk about some other things instead."
+
 
     }
 
@@ -100,7 +123,7 @@ function standardNoun(sub, act, obj)
 
 function standardAdj(sub, act, adj)
 {
-    switch ( Math.floor(Math.random()*2) )
+    switch ( Math.floor(Math.random()*6) )
     {
         case 0: 
             var gerund = nlp.verb(act).conjugate().gerund;
@@ -122,6 +145,14 @@ function standardAdj(sub, act, adj)
             }
             response += " " + adj + "?";
             return response;
+        case 2:
+            return "How does that make you feel?"
+        case 3:
+            return "Interesting, tell me more."
+        case 4:
+            return "You think you are crazy, but it's only an illusion."
+        case 5:
+            return "Let's talk about some other things instead."
     }
 }
 

@@ -48,7 +48,7 @@ function rawInput (assistant) {
     if (assistant.getRawInput() === 'bye') {
       assistant.tell('Goodbye!');
   } else {
-        /*if (name == true) {
+        if (name == true) {
             name = false;
             let inputPrompt = assistant.buildInputPrompt(true, 
                 '<speak>Hello ' + assistant.getRawInput() + ', my name is Doctor Sbaitso.' +
@@ -58,10 +58,10 @@ function rawInput (assistant) {
                 'So, tell me about your problems.</speak>');
             assistant.ask(inputPrompt);
         }
-      else {*/
+      else {
         textModule.actOnText(assistant);
         console.log("1");
-      // }
+      }
   }
 }
 
