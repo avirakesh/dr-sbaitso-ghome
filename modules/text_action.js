@@ -18,9 +18,11 @@ module.exports.actOnText = function(assistant)  {
     // console.log(nlp.text(assistant.getRawInput()).tags());
     // console.log(nlp.sentence(assistant.getRawInput()).withLinks());
 
-    
-
-    if (isQuestion(glossary.toJSON())) {
+    if (assistant.getRawInput().toLowerCase().startsWith('say ')) {
+        var response = assistant.getRawInput().substring(4);
+        var inputPrompt = assistant.buildInputPrompt(false, response);
+        assistant.ask(inputPrompt);
+    } else if (isQuestion(glossary.toJSON())) {
         // console.log("Question!!!!!");
         var inputPrompt = assistant.buildInputPrompt(true, question(assistant.getRawInput()));
         assistant.ask(inputPrompt);
@@ -36,17 +38,20 @@ module.exports.actOnText = function(assistant)  {
             var inputPrompt = assistant.buildInputPrompt(true, response);
             console.log(inputPrompt);
             assistant.ask(inputPrompt);
-            console.log("2");
+            // console.log("2");
         }
         else if (arr[0] == 1)
         {
             assistant.ask(assistant.buildInputPrompt(true, standardAdj(arr[1], arr[2], arr[3])));
         }
+        else {
+            assistant.ask(assistant.buildInputPrompt(false, randomSentence()));
+        }
         
     }
 }
 
-function question( sentence)
+function question(sentence)
 {
     var c = Math.floor(Math.random() * 6);
     switch (c) {
@@ -67,7 +72,8 @@ function question( sentence)
 
 function isQuestion(glossary) 
 {
-    if(glossary[0].isQTerm) 
+    // console.log(glossary[0].term);
+    if(glossary[0].isQTerm || glossary[0].term.toLowerCase() == 'can') 
     {
         return true;
     } 
@@ -82,7 +88,7 @@ function standardNoun(sub, act, obj)
         case 0: 
             var gerund = nlp.verb(act).conjugate().gerund;
             var objects = nlp.noun(obj).pluralize();
-            var response = "Do you think about " + gerund + " " + objects + " often?";
+            var response = "Do you think about " + gerund + " " + obj + " often?";
             console.log(response);
             return response;
         case 1:
@@ -141,7 +147,7 @@ function standardAdj(sub, act, adj)
             } 
             else 
             {
-                response = "Why is " + nlp.person(sub).pronoun();
+                response = "Why is " + sub;
             }
             response += " " + adj + "?";
             return response;
@@ -163,7 +169,7 @@ function getStatementType(terms) {
     for (var i = 0; i < terms.length && flag; i++) {
         if (terms[i].pos.Verb) {
             if (terms[i].tag != 'Gerund') {
-                console.log(terms[i].text);
+                // console.log(terms[i].text);
                 arr[2] = terms[i].text;
                 flag = false;
 
@@ -197,4 +203,21 @@ function getStatementType(terms) {
     }
 
     return arr;
+}
+
+function randomSentence () {
+    switch (Math.floor(Math.random() * 6)) {
+        case 0: 
+            return 'I am not sure I understand you.';
+        case 1:
+            return 'This is getting boring, just now you were talking about something else.';
+        case 2:
+            return 'What is it that you really want to know?';
+        case 3:
+            return 'Does talking to me help?';
+        case 4:
+            return 'Is that so?';
+        case 5:
+            return 'Come on, pour out your thoughts';
+    }
 }
