@@ -1,0 +1,23 @@
+{
+  "name": "Dr. Sbaitso Remastered",
+  "version": "0.0.0.1",
+  "description": "Dr. Sbaitso's sassiness in Google Home",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/avirakesh/dr-sbaitso-ghome"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Avichal Rakesh",
+  "license": "Beerware",
+  "dependencies": {
+    "actions-on-google": "^1.0.7",
+    "body-parser": "^1.16.1",
+    "express": "^4.14.1",
+    "nlp-links": "0.0.1",
+    "nlp_compromise": "^6.5.3",
+    "salient": "^0.2.1"
+  }
+}
