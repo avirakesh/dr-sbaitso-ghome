@@ -31,7 +31,7 @@ module.exports.actOnText = function(assistant)  {
         if (arr[0] == 0)
         {
             // assistant.ask(assistant.buildInputPrompt(standardNoun(arr[2], arr[1], arr[3])));
-            var response = standardNoun(arr[2], arr[1], arr[3]);
+            var response = standardNoun(arr[1], arr[2], arr[3]);
             console.log(response + " : " + assistant.getRawInput());
             var inputPrompt = assistant.buildInputPrompt(true, response);
             console.log(inputPrompt);
@@ -40,7 +40,7 @@ module.exports.actOnText = function(assistant)  {
         }
         else if (arr[0] == 1)
         {
-            assistant.ask(assistant.buildInputPrompt(true, standardAdj(arr[2], arr[1], arr[3])));
+            assistant.ask(assistant.buildInputPrompt(true, standardAdj(arr[1], arr[2], arr[3])));
         }
         
     }
@@ -73,13 +73,13 @@ function standardNoun(sub, act, obj)
             return response;
         case 1:
             response = "Why did ";
-            if (sub=="I") 
+            if (sub=="I" || sub == 'i') 
             {
                 response += "you ";
             }
             else 
             {
-                response += nlp.person(sub).pronoun() + " ";
+                response += sub + " ";
             }
             response += nlp.verb(act).conjugate().infinitive + " ";
             if (sub=="me") 
@@ -88,7 +88,7 @@ function standardNoun(sub, act, obj)
             }
             else 
             {
-                response += nlp.person(sub).pronoun() + "?";
+                response += obj + "?";
             }
             console.log(response);
             return response; 
@@ -107,15 +107,20 @@ function standardAdj(sub, act, adj)
             var objects = nlp.noun(adj).pluralize();
             return "Do you think about " + gerund + " " + objects + " often?";
         case 1: 
-            if (nlp.person(sub).pluralize()==sub || sub == "I") 
+            if (nlp.person(sub).pluralize()==sub || sub == "I" || sub == 'i') 
             {
-                response = "Why are " + nlp.person(sub).pronoun();
+                response = "Why are ";
+                if (sub == 'i' || sub == 'I') {
+                    response += 'you';
+                } else {
+                    response += nlp.person(sub).pronoun()
+                }
             } 
             else 
             {
                 response = "Why is " + nlp.person(sub).pronoun();
             }
-            response += " " + adj;
+            response += " " + adj + "?";
             return response;
     }
 }
@@ -140,6 +145,7 @@ function getStatementType(terms) {
                 }
                 flag = false;
                 for (var k = i + 1; k < terms.length && !flag; k++) {
+                    console.log(terms[k]);
                     if ((terms[k].pos.Verb && terms[k].tag == 'Gerund')) {
                         flag = true; 
                         arr[3] = terms[k].text;
