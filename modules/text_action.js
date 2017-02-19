@@ -4,46 +4,39 @@ nlp.plugin(require('nlp-links'));
 
 module.exports = {};
 
+//determine which kind of response function to call depending on the user's input
 module.exports.actOnText = function(assistant)  {
     console.log("Acting on text");
-    // console.log('Classify: ');
-    // console.log(speakeasy.classify(assistant.getRawInput()));
-    // console.log('Sentiment: ');
     var glossary = new salient.glossary.Glossary();
     glossary.parse(assistant.getRawInput());
-    // console.log('Salient: ');
-    // console.log(glossary.toJSON());
-    // console.log(glossary.concepts());
-    // console.log("Simple Text: " + nlp.text(assistant.getRawInput()).root());
-    // console.log(nlp.text(assistant.getRawInput()).tags());
-    // console.log(nlp.sentence(assistant.getRawInput()).withLinks());
 
+    //repeat what the user said
     if (assistant.getRawInput().toLowerCase().startsWith('say ')) {
         var response = assistant.getRawInput().substring(4);
         var inputPrompt = assistant.buildInputPrompt(false, response);
         assistant.ask(inputPrompt);
+    //call the question function
     } else if (isQuestion(glossary.toJSON())) {
-        // console.log("Question!!!!!");
         var inputPrompt = assistant.buildInputPrompt(true, question(assistant.getRawInput()));
         assistant.ask(inputPrompt);
     } else {
         var arr = getStatementType(nlp.text(assistant.getRawInput()).sentences[0].terms);
         console.log(arr);
-        // let inputPrompt = assistant.buildInputPrompt(true, assistant.getRawInput());
+        //call standardNoun when the object is a noun
         if (arr[0] == 0)
         {
-            // assistant.ask(assistant.buildInputPrompt(standardNoun(arr[2], arr[1], arr[3])));
             var response = standardNoun(arr[1], arr[2], arr[3]);
             console.log(response + " : " + assistant.getRawInput());
             var inputPrompt = assistant.buildInputPrompt(true, response);
             console.log(inputPrompt);
             assistant.ask(inputPrompt);
-            // console.log("2");
         }
+        // call standardAdj when the object is an adjective
         else if (arr[0] == 1)
         {
             assistant.ask(assistant.buildInputPrompt(true, standardAdj(arr[1], arr[2], arr[3])));
         }
+        //return a random default statement
         else {
             assistant.ask(assistant.buildInputPrompt(false, randomSentence()));
         }
@@ -51,6 +44,7 @@ module.exports.actOnText = function(assistant)  {
     }
 }
 
+//choose one response if the user asks a question
 function question(sentence)
 {
     var c = Math.floor(Math.random() * 6);
@@ -70,9 +64,10 @@ function question(sentence)
     }
 }
 
+//determine if the user asks a question by checking if the
+//1st word of the input String is a "question word"
 function isQuestion(glossary) 
 {
-    // console.log(glossary[0].term);
     if(glossary[0].isQTerm || glossary[0].term.toLowerCase() == 'can') 
     {
         return true;
@@ -80,7 +75,7 @@ function isQuestion(glossary)
         return false;
 }
 
-
+//choose a response if the sentence has an object that's a noun
 function standardNoun(sub, act, obj)
 {
     switch ( Math.floor(Math.random()*6) )
@@ -120,13 +115,12 @@ function standardNoun(sub, act, obj)
             return "You think you are crazy, but it's only an illusion."
         case 5:
             return "Let's talk about some other things instead."
-
-
     }
 
         
 }
 
+//choose a response if the object of the sentence is an adjective
 function standardAdj(sub, act, adj)
 {
     switch ( Math.floor(Math.random()*6) )
@@ -162,6 +156,7 @@ function standardAdj(sub, act, adj)
     }
 }
 
+//determine if it's a simple statement with an adjective/noun object or not
 function getStatementType(terms) {
     var flag = true;
     var arr = [-1, '', '', ''];
@@ -205,6 +200,7 @@ function getStatementType(terms) {
     return arr;
 }
 
+//misc responses for anything we haven't covered
 function randomSentence () {
     switch (Math.floor(Math.random() * 6)) {
         case 0: 
